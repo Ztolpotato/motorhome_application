@@ -10,11 +10,12 @@ class sensorWindow(ttk.Frame):
         #self = parent
         self.grid()
         self.controller = None
-        self.__setEngineTemp()
-        self.__setCoolantLevel()
-        self.__setFuelLevel()
+        #self.__setEngineTemp()
+        #self.__setCoolantLevel()
+        #self.__setFuelLevel()
         self.__setWaterLevel()
         self.__setGreyWaterLevel()
+        self.__setBlackWaterLevel()
         self.setOutdoorTemperature()
         self.setBatteryLevel()
         self.setIndoorTemperature()
@@ -23,7 +24,7 @@ class sensorWindow(ttk.Frame):
         self.addFrameSwitchButton()
 
     def addFrameSwitchButton(self):
-        switchButton = tk.Button(self,text="Switch Screen",fg='white', bg="#1E2130", font=("Open sans", 12),
+        switchButton = tk.Button(self,text="Switch Screen",fg='white', bg="#1E2130", font=("Open sans", 15),
                 command=self.onSwitchButtonClick)
         switchButton.grid(row=6,column=0)
         switchButton.grid_columnconfigure(1,weight=1)
@@ -35,13 +36,23 @@ class sensorWindow(ttk.Frame):
         self.controller = controller
 
     def setBatteryLevel(self):
-        self.__addText("Battery voltage" + " - V", 0, 1, 2)
+        self.__addText("Battery voltage" + " - V", 2, 0, 2)
 
     def setOutdoorTemperature(self):
-        self.__addText("Outdoor Temp: " + "- C\N{DEGREE SIGN}", 0, 2, 2)
+        self.__addText("Outdoor Temp: " + "- C\N{DEGREE SIGN}", 3, 0, 1)
 
     def setIndoorTemperature(self):
-        self.__addText("Indoor Temp: " + "- C\N{DEGREE SIGN}", 0, 3, 2)
+        self.__addText("Indoor Temp: " + "- C\N{DEGREE SIGN}", 4, 0, 1)
+
+    def __setBlackWaterLevel(self):
+        global blackWaterImg
+        blackWaterImg = ImageTk.PhotoImage(Image.open("fluid50GT.png"))
+        canvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
+        canvas.grid(row=2, column=3)
+        #canvas.pack()
+        canvas.create_image(100,150, anchor="s",image=blackWaterImg)
+        self.__addTitleToImage("Greywater level", 1, 3)
+
 
     def __setGreyWaterLevel(self):
         global greeyWaterImg
@@ -79,11 +90,11 @@ class sensorWindow(ttk.Frame):
         self.__addTitleToImage("Coolant level", 3, 0)
 
     def __addTitleToImage(self,text,row,col):
-        label = tk.Label(self,text=text,bg="#1E2130",fg='white',font=("Open sans", 12))
+        label = tk.Label(self,text=text,bg="#1E2130",fg='white',font=("Open sans", 15))
         label.grid(row=row,column=col)
 
     def __addText(self,text,row,col,span):
-        label = tk.Label(self,text=text,bg="#1E2130",fg='white',font=("Open sans", 12))
+        label = tk.Label(self,text=text,bg="#1E2130",fg='white',font=("Open sans", 15))
         label.grid(row=row,column=col,rowspan=span)
 
 

@@ -1,3 +1,6 @@
-dash==1.0.2
-dash-daq==0.1.7
-numpy>=1.16.2
+plotly
+pillow
+opencv-python 
+-U numpy
+dash_daq
+sudo apt-get install python3-pil python3-pil.imagetk

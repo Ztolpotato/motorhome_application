@@ -24,7 +24,7 @@ class engineSensorsWindow(ttk.Frame):
         self.controller = controller
 
     def addFrameSwitchButton(self):
-        switchButton = tk.Button(self,text="Switch Screen",fg='white', bg="#1E2130", font=("Open sans", 12),
+        switchButton = tk.Button(self,text="Switch Screen",fg='white', bg="#1E2130", font=("Open sans", 15),
                 command=self.onSwitchButtonClick)
         switchButton.grid(row=3,column=0)
 
@@ -50,7 +50,7 @@ class engineSensorsWindow(ttk.Frame):
         self.__addTitleToImage("Coolant level", 0, 2)
 
     def __addTitleToImage(self,text,row,col):
-        label = tk.Label(self,text=text,bg="#1E2130",fg='white',font=("Open sans", 12))
+        label = tk.Label(self,text=text,bg="#1E2130",fg='white',font=("Open sans", 15))
         label.grid(row=row,column=col,sticky="s")
 
     def __setEngineTemp(self):
