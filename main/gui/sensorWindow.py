@@ -22,6 +22,8 @@ class sensorWindow(ttk.Frame):
         temp = tk.Label(self,text="", bg="#1E2130",pady=20)
         temp.grid(row=5,column=0)
         self.addFrameSwitchButton()
+        global emptyFuel
+        emptyFuel = ImageTk.PhotoImage(Image.open("fluid0T.png"))
 
     def addFrameSwitchButton(self):
         switchButton = tk.Button(self,text="Switch Screen",fg='white', bg="#1E2130", font=("Open sans", 15),
@@ -74,10 +76,11 @@ class sensorWindow(ttk.Frame):
     def __setFuelLevel(self):
         global fuelImg
         fuelImg = ImageTk.PhotoImage(Image.open("fluid50DT.png"))
-        canvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
-        canvas.grid(row=4, column=1)
+        global fuelCanvas
+        fuelCanvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
+        fuelCanvas.grid(row=4, column=1)
         #canvas.pack()
-        canvas.create_image(100,150, anchor="s",image=fuelImg)
+        fuelCanvas.create_image(100,150, anchor="s",image=fuelImg)
         self.__addTitleToImage("Fuel level", 3, 1)
 
     def __setCoolantLevel(self):
@@ -125,3 +128,9 @@ class sensorWindow(ttk.Frame):
                         {'range': [80, 95], 'color': "Orange"},
                         {'range': [95, 120], 'color': "Red"}]}),layout=lay)
         return fig
+
+    def fullFuel(self):
+        fuelCanvas.itemconfig(image = emptyFuel)
+
+    def empty(self):
+        fuelCanvas.itemconfig(image = fuelImg)

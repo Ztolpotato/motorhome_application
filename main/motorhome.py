@@ -9,8 +9,10 @@ import dash_daq as dash
 from dash import dcc
 import time
 from dash import html
-from tkhtmlview import HTMLLabel
-from PIL import ImageTk, Image
+import threading
+#from tkhtmlview import HTMLLabel
+#from PIL import ImageTk, Image
+import RPi.GPIO as GPIO
 
 class MotorHomeApplication(tk.Tk):
 
@@ -52,6 +54,11 @@ class MotorHomeApplication(tk.Tk):
         engineSensorView.set_controller(self)
         sensorView.set_controller(self)
         self.show_frame("sensorWindow")
+        GPIO.setmode (GPIO.BOARD)
+        GPIO.setup (14,GPIO.IN)
+        th = threading.Thread(target=threadFunc(self))
+        th.start()
+        
 
     def show_frame(self, page_name):
         '''Show a frame for the given page name'''
@@ -61,3 +68,12 @@ class MotorHomeApplication(tk.Tk):
 if __name__ == '__main__':
     app =  MotorHomeApplication()
     app.mainloop()
+
+def threadFunc(self):
+    time.sleep(1)
+    while True:
+        state = GPIO.input(14)
+        if state is True:
+            sensorView.fullFuel()
+        else:
+            sensorView.empty()
