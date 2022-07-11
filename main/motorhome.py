@@ -13,9 +13,10 @@ import threading
 #from tkhtmlview import HTMLLabel
 #from PIL import ImageTk, Image
 import RPi.GPIO as GPIO
-
+import Adafruit_GPIO.SPI as SPI
+import Adafruit_MCP3008
 class MotorHomeApplication(tk.Tk):
-    
+    FUELIN50 = 14
     
     def __init__(self):
         super().__init__()
@@ -56,7 +57,8 @@ class MotorHomeApplication(tk.Tk):
         self.sensorView.set_controller(self)
         self.show_frame("sensorWindow")
         GPIO.setmode (GPIO.BCM)
-        GPIO.setup (14,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup (FUELIN50,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        self.initMCP()
         th = threading.Thread(target=self.threadFunc)
         th.start()
         print("bullcrap")
@@ -73,15 +75,28 @@ class MotorHomeApplication(tk.Tk):
     def threadFunc(self):
         while True:
             time.sleep(1)
-            
-            state = GPIO.input(14)
+            state = GPIO.input(FUELIN50)
             print(state)
-            if state is 1:
+            if state == 1:
                 print("somtimes full")
                 self.engineSensorView.fullFuel()
             else:
                 self.engineSensorView.empty()
+            resistorValue = self.mcp.read_adc(0)
+            print(resistorValue)
 
+    def initMCP(self):
+        # Software SPI configuration:
+            #CLK  = 18
+            #MISO = 23
+            #MOSI = 24
+            #CS   = 25
+            #mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
+
+            # Hardware SPI configuration:
+            SPI_PORT   = 0
+            SPI_DEVICE = 0
+            self.mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
 
 if __name__ == '__main__':
     app =  MotorHomeApplication()
