@@ -19,6 +19,9 @@ class engineSensorsWindow(ttk.Frame):
             self.grid_rowconfigure(row, weight=1)
         for col in range(2):
             self.grid_columnconfigure(col, weight=1)
+        global emptyFuel
+        emptyFuel = ImageTk.PhotoImage(Image.open("fluid0T.png"))
+        
 
     def set_controller(self,controller):
         self.controller = controller
@@ -29,15 +32,17 @@ class engineSensorsWindow(ttk.Frame):
         switchButton.grid(row=3,column=0)
 
     def onSwitchButtonClick(self):
+        #self.controller.changePic()
         self.controller.show_frame("sensorWindow")
     
     def __setFuelLevel(self):
         global fuelImg
         fuelImg = ImageTk.PhotoImage(Image.open("fluid50DT.png"))
-        canvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
-        canvas.grid(row=1, column=1)
-        #canvas.pack()
-        canvas.create_image(100,150, anchor="s",image=fuelImg)
+        global fuelCanvas
+        fuelCanvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
+        fuelCanvas.grid(row=1, column=1)
+        global fuelCImg
+        fuelCImg = fuelCanvas.create_image(100,150, anchor="s",image=fuelImg)
         self.__addTitleToImage("Fuel level", 0, 1)
 
     def __setCoolantLevel(self):
@@ -79,3 +84,17 @@ class engineSensorsWindow(ttk.Frame):
                         {'range': [80, 95], 'color': "Orange"},
                         {'range': [95, 120], 'color': "Red"}]}),layout=lay)
         return fig
+    
+    
+    def fullFuel(self):
+        fuelImg = Image.open("fluid50DT.png")
+        fuelImg = ImageTk.PhotoImage(fuelImg)
+        fuelCanvas.imgref = fuelImg
+        fuelCanvas.itemconfig(fuelCImg,image = fuelImg)
+
+    def empty(self):
+        emptyFuel = Image.open("fluid0T.png")
+        emptyFuel = ImageTk.PhotoImage(emptyFuel)
+        fuelCanvas.imgref = emptyFuel
+        #fuelCanvas.create_image(100,115, anchor="s",image=tempImg)
+        fuelCanvas.itemconfig(fuelCImg,image = emptyFuel)
