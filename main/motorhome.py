@@ -3,18 +3,14 @@ from gui import reversingCamera
 from gui import startPage
 from gui import engineSensorsWindow
 from model import motorHomeModel
-from controller import motorHomeController
+
+#from controller import motorHomeController
 import tkinter as tk
 import dash_daq as dash
 from dash import dcc
-import time
 from dash import html
 import threading
-#from tkhtmlview import HTMLLabel
-#from PIL import ImageTk, Image
-import RPi.GPIO as GPIO
-import Adafruit_GPIO.SPI as SPI
-import Adafruit_MCP3008
+
 class MotorHomeApplication(tk.Tk):
     
     
@@ -32,62 +28,44 @@ class MotorHomeApplication(tk.Tk):
         self['bg'] = "#1E2130"
         
         #Full Screen Window
-        self.attributes('-fullscreen', True)
+        #self.attributes('-fullscreen', True)
         self.bind("<Escape>", lambda event: self.attributes("-fullscreen", False))
         
+
+        #Creates frames and saves them in self.frames
+        #Change which frame is on top with show_frame
         self.frames = {}
         for F in (startPage.startPage,sensorWindow.sensorWindow, reversingCamera.reversingCamera,
         engineSensorsWindow.engineSensorsWindow):
             page_name = F.__name__
             frame = F(parent=container)
             self.frames[page_name] = frame
-            print(frame)
-
-            # put all of the pages in the same location;
-            # the one on the top of the stacking order
-            # will be the one that is visible.
             frame.grid(row=0, column=0, sticky="nsew")
         self.sensorView = self.frames["sensorWindow"]
         self.engineSensorView = self.frames["engineSensorsWindow"]
         reversingCameraView = self.frames["reversingCamera"]
 
-        mod = motorHomeModel.Model("df")
-        controller = motorHomeController.Controller(self.sensorView,mod)
+        self.mod = motorHomeModel.Model(self)
         self.engineSensorView.set_controller(self)
         self.sensorView.set_controller(self)
         self.show_frame("sensorWindow")
-        GPIO.setmode (GPIO.BCM)
-        GPIO.setup (14,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        self.initMCP()
-        th = threading.Thread(target=self.threadFunc)
+        th = threading.Thread(target=self.mod.logicMain)
         th.start()
-        print("bullcrap")
         
 
     def show_frame(self, page_name):
         '''Show a frame for the given page name'''
         frame = self.frames[page_name]
         frame.tkraise()
-    
-    def changePic(self):
-        self.engineSensorView.empty()
-        
-    def threadFunc(self):
-        while True:
-            time.sleep(1)
-            state = GPIO.input(14)
-            if state == 1:
-                self.engineSensorView.fullFuel()
-            else:
-                self.engineSensorView.empty()
-            resistorValue = self.mcp.read_adc(0)
-            print(resistorValue)
 
-    def initMCP(self):
-            # Hardware SPI configuration:
-            SPI_PORT   = 0
-            SPI_DEVICE = 0
-            self.mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
+    def fullCoolant():
+        self.engineSensorView.fullCoolant()
+
+    def moderatelyFullCoolant():
+        self.engineSensorView.moderateCoolant()
+
+    def emptyCoolant():
+        self.engineSensorView.emptyCoolant()
 
 if __name__ == '__main__':
     app =  MotorHomeApplication()
