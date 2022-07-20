@@ -6,9 +6,6 @@ from model import motorHomeModel
 
 #from controller import motorHomeController
 import tkinter as tk
-import dash_daq as dash
-from dash import dcc
-from dash import html
 import threading
 
 class MotorHomeApplication(tk.Tk):
@@ -16,7 +13,6 @@ class MotorHomeApplication(tk.Tk):
     
     def __init__(self):
         super().__init__()
-        print("Starting...")
         self.title("MotorHome sensor and reversing camera application")
         #Set the Geometry
         self.geometry("800x480")
@@ -41,17 +37,22 @@ class MotorHomeApplication(tk.Tk):
             frame = F(parent=container)
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
+        self.show_frame("startPage")
         self.sensorView = self.frames["sensorWindow"]
         self.engineSensorView = self.frames["engineSensorsWindow"]
-        reversingCameraView = self.frames["reversingCamera"]
+        self.reversingCameraView = self.frames["reversingCamera"]
 
         self.mod = motorHomeModel.Model(self)
         self.engineSensorView.set_controller(self)
         self.sensorView.set_controller(self)
-        self.show_frame("sensorWindow")
+        self.reversingCameraView.set_controller(self)
+        
         th = threading.Thread(target=self.mod.logicMain)
         th.start()
-        
+        self.show_frame("engineSensorsWindow")
+        #self.engineSensorView.updateEngineTemp(75)
+        #self.engineSensorView.emptyCoolant()
+        #self.engineSensorView.fuel0("12")
 
     def show_frame(self, page_name):
         '''Show a frame for the given page name'''
@@ -66,6 +67,21 @@ class MotorHomeApplication(tk.Tk):
 
     def emptyCoolant():
         self.engineSensorView.emptyCoolant()
+
+    def fuel100(fuelValue):
+        self.engineSensorView.fuel100(fuelValue)
+
+    def fuel50(fuelValue):
+        self.engineSensorView.fuel50(fuelValue)
+
+    def fuel25(fuelValue):
+        self.engineSensorView.fuel25(fuelValue)
+
+    def fuel0(fuelValue):
+        self.engineSensorView.fuel0(fuelValue)
+
+    def engineTemp(engineTemp):
+        self.engineSensorView.updateEngineTemp(engineTemp)
 
 if __name__ == '__main__':
     app =  MotorHomeApplication()

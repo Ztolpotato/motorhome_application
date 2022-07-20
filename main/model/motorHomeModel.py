@@ -4,19 +4,25 @@
 #import Adafruit_MCP3008
 import time
 from model.modules import coolingLevel
+from model.modules import fuelLevel
+from model.modules import engineTemp
 
 class Model:
     def __init__(self,controller):
+        #self.initMCP()
         self.controller = controller
         self.coolingLevel = coolingLevel.coolingLevel()
+        #self.engineTemp = engineTemp.engineTemp()
+        #self.fuelLevel = fuelLevel.fuelLevel(self.mcp)
         #GPIO.setmode (GPIO.BCM)
         #GPIO.setup (14,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        #self.initMCP()
+        
 
     def logicMain(self):
         while True:
             time.sleep(1)
             #self.__updateCoolantLevel()
+            #self.__updateFuelLevel()
             resistorValue = self.mcp.read_adc(0)
             print(resistorValue)
 
@@ -37,18 +43,30 @@ class Model:
 
     def __updateSpeed(self):
         #TODO IMPLEMENT waiting for sensors
+        print("not implemented yet")
 
     def __updateEngineTemperature(self):
-        #TODO IMPLEMENT waiting for sensors
+        self.controller.engineTemp(self.engineTemp.getTemp())
 
     def __updateFuelLevel(self):
-        #TODO IMPLEMENT waiting for sensors
-    
+        fuelValue = self.fuelLevel.getLevel()
+        if fuelValue > 75:
+            self.controller.fuel100(fuelValue)
+        elif fuelValue > 50 :
+            self.controller.fuel50(fuelValue)
+        elif fuelValue > 25 :
+            self.controller.fuel25(fuelValue)
+        else:
+            self.controller.fuel0(fuelValue)
+
     def __updateIndoorTemperature(self):
         #TODO IMPLEMENT waiting for sensors
+        print("not implemented yet")
 
     def __updateOutdoorTemperature(self):
         #TODO IMPLEMENT waiting for sensors
+        print("not implemented yet")
 
     def __reverseSignalReceived(self):
-        
+        #TODO IMPLEMENT waiting for sensors
+        print("not implemented yet")

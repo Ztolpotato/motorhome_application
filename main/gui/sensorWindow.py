@@ -24,7 +24,7 @@ class sensorWindow(ttk.Frame):
         self.addFrameSwitchButton()
 
     def addFrameSwitchButton(self):
-        switchButton = tk.Button(self,text="Switch Screen",fg='white', bg="#1E2130", font=("Open sans", 15),
+        switchButton = tk.Button(self,text="Engine Screen",fg='white', bg="#1E2130", font=("Open sans", 15),
                 command=self.onSwitchButtonClick)
         switchButton.grid(row=6,column=0)
         switchButton.grid_columnconfigure(1,weight=1)

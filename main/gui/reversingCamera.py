@@ -12,9 +12,22 @@ class reversingCamera(tk.Frame):
         s.configure('TFrame', background="#1E2130")
         self.lmain = tk.Label(self, borderwidth=0)
         self.lmain.grid()
+        self.__addFrameSwitchButton()
         global cap
+
     def set_controller(self,controller):
         self.controller = controller
+
+    def __addFrameSwitchButton(self):
+        global backButton
+        backButton = tk.PhotoImage(file= r'assets/BackButton.png')
+        backButton = backButton.subsample(30, 30)
+        switchButton = tk.Button(self,text="Switch Screen",fg='black', image=backButton, bg="white", font=("Open sans", 15),
+                command=self.onSwitchButtonClick)
+        switchButton.grid(row=0,column=0)
+
+    def onSwitchButtonClick(self):
+        self.controller.show_frame("engineSensorsWindow")
 
     def runVideoStream(self):
         ret, frame = cap.read()

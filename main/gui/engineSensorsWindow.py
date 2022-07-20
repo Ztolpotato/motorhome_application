@@ -16,8 +16,10 @@ class engineSensorsWindow(ttk.Frame):
         self.__setFuelLevel(3,1,1,1)
         self.__setSpeedometer(3, 0, 1, 1)
         self.__addFrameSwitchButton(4)
+        self.__addCameraButton(4)
         self.__setOutdoorTemperature(1,2,1,1)
         self.__setIndoorTemperature(3,2,1,1)
+        self.__setFuelPercentageValue(2,2,1,1)
         for row in range(5):
             self.grid_rowconfigure(row, weight=1)
         for col in range(2):
@@ -30,6 +32,13 @@ class engineSensorsWindow(ttk.Frame):
     def set_controller(self,controller):
         self.controller = controller
 
+    def __setFuelPercentageValue(self,row,col,rowspan,colspan):
+        global fuelText
+        fuelText = tk.StringVar()
+        fuelText.set("Fuel: - %")
+        fuelPercentageLabel = tk.Label(self,textvariable=fuelText,bg="#1E2130",fg='white',font=("Open sans", 15))
+        fuelPercentageLabel.grid(row=row,column=col,rowspan=rowspan)
+
     def __setOutdoorTemperature(self,row,col,rowspan,colspan):
         self.__addText("Outdoor Temp: " + "- C\N{DEGREE SIGN}", row, col, rowspan)
 
@@ -41,13 +50,21 @@ class engineSensorsWindow(ttk.Frame):
         label.grid(row=row,column=col,rowspan=span)
 
     def __addFrameSwitchButton(self,row):
-        switchButton = tk.Button(self,text="Switch Screen",fg='white', bg="#1E2130", font=("Open sans", 15),
+        switchButton = tk.Button(self,text="Sensor screen",fg='white', bg="#1E2130", font=("Open sans", 15),
                 command=self.onSwitchButtonClick)
         switchButton.grid(row=row,column=0)
 
+    def __addCameraButton(self,row):
+        reversingButton = tk.Button(self,text="Reversing Camera",fg='white', bg="#1E2130", font=("Open sans", 15),
+                command=self.onCameraButtonClick)
+        reversingButton.grid(row=row,column=1)
+
     def onSwitchButtonClick(self):
         self.controller.show_frame("sensorWindow")
-    
+
+    def onCameraButtonClick(self):
+        self.controller.show_frame("reversingCamera")
+
     def __setFuelLevel(self,row,col,rowspan,colspan):
         global fuelImg
         fuelImg = ImageTk.PhotoImage(Image.open("fluid50DT.png"))
@@ -73,12 +90,16 @@ class engineSensorsWindow(ttk.Frame):
         label.grid(row=row,column=col,sticky="s")
 
     def __setEngineTemp(self,row,col,rowspan,colspan):
-        global tempImg
-        tempImg = Image.open("gauge.png")
-        tempImg = ImageTk.PhotoImage(tempImg)
-        canvas = tk.Canvas(self, bg="#1E2130", width=210, height=100,highlightthickness=0)
-        canvas.grid(row=row, column=col,columnspan=colspan,rowspan=rowspan)
-        canvas.create_image(100,115, anchor="s",image=tempImg)
+        speedometer = self.__createFigure(0)
+        speedometer.write_image("assets/temp.png")
+        engineTempImg = Image.open("assets/temp.png")
+        engineTempImg = engineTempImg.resize((210,150))
+        engineTempImg = ImageTk.PhotoImage(engineTempImg)
+        global engineCanvas
+        engineCanvas = tk.Canvas(self, bg="#1E2130", width=210, height=100,highlightthickness=0)
+        engineCanvas.grid(row=row, column=col,columnspan=colspan,rowspan=rowspan)
+        engineCanvas.create_image(100,115, anchor="s",image=engineTempImg)
+        engineCanvas.imgref = engineTempImg
         self.__addTitleToImage("Engine temperature", row-1, col)
 
     def __setSpeedometer(self,row,col,rowspan,colspan):
@@ -105,8 +126,9 @@ class engineSensorsWindow(ttk.Frame):
             domain = {'x': [0, 1], 'y': [0, 1]},
             value = temp,
             mode = "gauge+number",
+            number = {'font': {'size': 150}},
             gauge = {'axis': {'range': [-20, 120], 'tickwidth': 1,'tickcolor': "black"},
-                'bar': {'color': "White"},#MidnightBlue"},
+                'bar': {'color': "MidnightBlue"},#MidnightBlue"},
                     'steps' : [
                         {'range': [-20, 40], 'color': "Blue"},
                         {'range': [40, 80], 'color': "Green"},
@@ -131,13 +153,36 @@ class engineSensorsWindow(ttk.Frame):
             layout=lay)
         return speedfig
 
-        
-    
-    def fullFuel(self):
+    def fuel100(self,fuelValue):
         fuelImg = Image.open("fluid50DT.png")
         fuelImg = ImageTk.PhotoImage(fuelImg)
         fuelCanvas.imgref = fuelImg
         fuelCanvas.itemconfig(fuelCImg,image = fuelImg)
+        self.changeFuelText(fuelValue)
+
+    def fuel50(self,fuelValue):
+        fuelImg = Image.open("fluid50DT.png")
+        fuelImg = ImageTk.PhotoImage(fuelImg)
+        fuelCanvas.imgref = fuelImg
+        fuelCanvas.itemconfig(fuelCImg,image = fuelImg)
+        self.changeFuelText(fuelValue)
+
+    def fuel25(self,fuelValue):
+        fuelImg = Image.open("fluid50DT.png")
+        fuelImg = ImageTk.PhotoImage(fuelImg)
+        fuelCanvas.imgref = fuelImg
+        fuelCanvas.itemconfig(fuelCImg,image = fuelImg)
+        self.changeFuelText(fuelValue)
+
+    def fuel0(self,fuelValue):
+        fuelImg = Image.open("fluid0DT.png")
+        fuelImg = ImageTk.PhotoImage(fuelImg)
+        fuelCanvas.imgref = fuelImg
+        fuelCanvas.itemconfig(fuelCImg,image = fuelImg)
+        self.changeFuelText(fuelValue)
+
+    def changeFuelText(self,fuelvalue):
+        fuelText.set("Fuel: " + fuelvalue + "%")
 
     def empty(self):
         emptyFuel = Image.open("fluid0T.png")
@@ -162,3 +207,12 @@ class engineSensorsWindow(ttk.Frame):
         moderateCoolant = ImageTk.PhotoImage(moderateCoolant)
         coolantCanvas.imgref = moderateCoolant
         coolantCanvas.itemconfig(coolantContainer,image = moderateCoolant)
+
+    def updateEngineTemp(self,engineTemp):
+        speedometer = self.__createFigure(engineTemp)
+        speedometer.write_image("assets/temp.png")
+        engineTempImg = Image.open("assets/temp.png")
+        engineTempImg = engineTempImg.resize((210,150))
+        engineTempImg = ImageTk.PhotoImage(engineTempImg)
+        engineCanvas.imgref = engineTempImg
+        engineCanvas.itemconfig(fuelCImg,image = engineTempImg)
