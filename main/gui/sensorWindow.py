@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-import plotly.graph_objects as go
+from plotly import graph_objects as go
 from PIL import ImageTk, Image
 import numpy as np
 import cv2

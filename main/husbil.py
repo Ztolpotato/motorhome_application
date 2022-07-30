@@ -49,10 +49,14 @@ class MotorHomeApplication(tk.Tk):
         
         th = threading.Thread(target=self.mod.logicMain)
         th.start()
-        self.show_frame("engineSensorsWindow")
+        th2 = threading.Thread(target=self.th_camera)
+        th2.start()
+        self.show_frame("reversingCamera")
         #self.engineSensorView.updateEngineTemp(75)
         #self.engineSensorView.emptyCoolant()
         #self.engineSensorView.fuel0("12")
+    def th_camera(self):
+        self.reversingCameraView.runVideoStream()
 
     def show_frame(self, page_name):
         '''Show a frame for the given page name'''

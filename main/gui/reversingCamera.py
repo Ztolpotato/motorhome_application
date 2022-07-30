@@ -8,12 +8,15 @@ class reversingCamera(tk.Frame):
         self.controller = None
         # Initialize style
         s = ttk.Style()
+        global cap
+        cap = cv2.VideoCapture(-1,2)
+        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
         # Create style used by default for all Frames
         s.configure('TFrame', background="#1E2130")
         self.lmain = tk.Label(self, borderwidth=0)
         self.lmain.grid()
         self.__addFrameSwitchButton()
-        global cap
+        #self.setVideoStreamDevice(0)
 
     def set_controller(self,controller):
         self.controller = controller
@@ -30,18 +33,21 @@ class reversingCamera(tk.Frame):
         self.controller.show_frame("engineSensorsWindow")
 
     def runVideoStream(self):
+        
         ret, frame = cap.read()
-        frame = cv2.resize(frame,(800,450),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
-        cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-        img = Image.fromarray(cv2image)
-        imgtk = ImageTk.PhotoImage(image=img)
-        self.lmain.imgtk = imgtk
-        self.lmain.configure(image=imgtk)
+        print(ret)
+        if ret==True:
+            frame = cv2.resize(frame,(800,450),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
+            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+            img = Image.fromarray(cv2image)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.lmain.imgtk = imgtk
+            self.lmain.configure(image=imgtk)
         self.lmain.after(1, self.runVideoStream)
 
     def releaseVideoStream():
         cap.release()
 
-    def setVideoStreamDevice(device):
+    def setVideoStreamDevice(self,device):
         cap = cv2.VideoCapture(device)
-        cap.set(cv2.CAP_PROP_BUFFERSIZE, 0)
+        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
