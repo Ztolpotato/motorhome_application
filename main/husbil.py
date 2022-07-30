@@ -4,7 +4,7 @@ from gui import startPage
 from gui import engineSensorsWindow
 from model import motorHomeModel
 
-
+import bitbangio
 import board
 import digitalio
 import adafruit_max31855
@@ -65,13 +65,17 @@ class MotorHomeApplication(tk.Tk):
         CLK = 13
         CS  = 19
         DO  = 26
-        sensor = MAX31855.MAX31855(CLK, CS, DO)
-        temp = sensor.readTempC()
-        internal = sensor.readInternalC()
-        print('Thermocouple Temperature: {0:0.3F}*C / {1:0.3F}*F'.format(temp, c_to_f(temp)))
-        print('Internal Temperature: {0:0.3F}*C / {1:0.3F}*F'.format(internal, c_to_f(internal)))
-        time.sleep(1.0)
-
+        cs = digitalio.DigitalInOut(board.D19)
+        cs.direction = digitalio.Direction.OUTPUT
+        cs.value = True
+        spi.configure(baudrate=5000000, phase=0, polarity=0)
+        spi = bitbangio.SPI(board.D13,MISO=board.D26)
+        max31855 = adafruit_max31855.MAX31855(spi, cs)
+        while True:
+            tempC = max31855.temperature
+            tempF = tempC * 9 / 5 + 32
+            print("Temperature: {} C {} F ".format(tempC, tempF))
+            time.sleep(2.0)
         #self.reversingCameraView.runVideoStream()
 
     def show_frame(self, page_name):

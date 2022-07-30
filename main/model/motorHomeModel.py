@@ -1,7 +1,7 @@
 
-#import RPi.GPIO as GPIO
-#import Adafruit_GPIO.SPI as SPI
-#import Adafruit_MCP3008
+import RPi.GPIO as GPIO
+import Adafruit_GPIO.SPI as SPI
+import Adafruit_MCP3008
 import time
 from model.modules import coolingLevel
 from model.modules import fuelLevel
@@ -9,13 +9,13 @@ from model.modules import engineTemp
 
 class Model:
     def __init__(self,controller):
-        #self.initMCP()
+        self.initMCP()
         self.controller = controller
         self.coolingLevel = coolingLevel.coolingLevel()
-        #self.engineTemp = engineTemp.engineTemp()
-        #self.fuelLevel = fuelLevel.fuelLevel(self.mcp)
-        #GPIO.setmode (GPIO.BCM)
-        #GPIO.setup (14,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        self.engineTemp = engineTemp.engineTemp()
+        self.fuelLevel = fuelLevel.fuelLevel(self.mcp)
+        GPIO.setmode (GPIO.BCM)
+        GPIO.setup (14,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         
 
     def logicMain(self):
