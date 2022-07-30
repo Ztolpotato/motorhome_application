@@ -23,7 +23,7 @@ class Model:
             time.sleep(1)
             #self.__updateCoolantLevel()
             #self.__updateFuelLevel()
-            resistorValue = self.mcp.read_adc(0)
+            #resistorValue = self.mcp.read_adc(0)
             print(resistorValue)
 
     def initMCP(self):

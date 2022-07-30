@@ -4,6 +4,11 @@ from gui import startPage
 from gui import engineSensorsWindow
 from model import motorHomeModel
 
+
+import board
+import digitalio
+import adafruit_max31855
+
 #from controller import motorHomeController
 import tkinter as tk
 import threading
@@ -56,7 +61,18 @@ class MotorHomeApplication(tk.Tk):
         #self.engineSensorView.emptyCoolant()
         #self.engineSensorView.fuel0("12")
     def th_camera(self):
-        self.reversingCameraView.runVideoStream()
+        # Raspberry Pi software SPI configuration.
+        CLK = 13
+        CS  = 19
+        DO  = 26
+        sensor = MAX31855.MAX31855(CLK, CS, DO)
+        temp = sensor.readTempC()
+        internal = sensor.readInternalC()
+        print('Thermocouple Temperature: {0:0.3F}*C / {1:0.3F}*F'.format(temp, c_to_f(temp)))
+        print('Internal Temperature: {0:0.3F}*C / {1:0.3F}*F'.format(internal, c_to_f(internal)))
+        time.sleep(1.0)
+
+        #self.reversingCameraView.runVideoStream()
 
     def show_frame(self, page_name):
         '''Show a frame for the given page name'''
