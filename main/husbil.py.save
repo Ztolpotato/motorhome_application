@@ -8,7 +8,6 @@ import adafruit_bitbangio as bitbangio
 import board
 import digitalio
 import adafruit_max31855
-import time
 
 #from controller import motorHomeController
 import tkinter as tk
@@ -62,15 +61,26 @@ class MotorHomeApplication(tk.Tk):
         #self.engineSensorView.emptyCoolant()
         #self.engineSensorView.fuel0("12")
     def th_camera(self):
-        cs = digitalio.DigitalInOut(board.D7)
-        cs.direction = digitalio.Direction.OUTPUT
-        spi = board.SPI()
+        # Raspberry Pi software SPI configuration.
+        CLK = 13
+        CS  = 19
+        DO  = 26
+        cs = digitalio.DigitalInOut(board.D19)
+        spi = busio.SPI(board.D21,MOSI=board.D20,MISO=board.D)
         max31855 = adafruit_max31855.MAX31855(spi, cs)
         while True:
-           tempC = max31855.temperature 
-           tempC = int(tempC-18)
-           print("Temperature: {} C ".format(tempC))
-           time.sleep(4.0)
+            tempC = max31855.temperature
+            tempF = tempC * 9 / 5 + 32
+            print("Temperature: {} C {} F ".format(tempC, tempF))
+            #spi.configure(baudrate=5000000, phase=0, polarity=0)
+            #cs.value = False
+            #result = bytearray(4)
+            #spi.readinto(result)
+            #cs.value = True
+            #result
+            #bytearray(b'\x01\xa8\x1a\xf0')
+            #spi.unlock()
+            time.sleep(2.0)
         #self.reversingCameraView.runVideoStream()
 
     def show_frame(self, page_name):
