@@ -1,16 +1,19 @@
-#import Adafruit_MAX31855.MAX31855 as MAX31855
+import busio
+import board
+import digitalio
+import adafruit_max31855
+import time
 
 class engineTemp:
 
     def __init__(self):
-        # Raspberry Pi software SPI configuration.
-        CLK = 29
-        CS = 31
-        DO = 33
-        global sensor 
-        sensor = MAX31855.MAX31855(CLK, CS, DO)
+        cs = digitalio.DigitalInOut(board.D7)
+        cs.direction = digitalio.Direction.OUTPUT
+        spi = board.SPI()
+        max31855 = adafruit_max31855.MAX31855(spi, cs)
 
     def getTemp():
-        temp = sensor.readTempC()
-        internal = sensor.readInternalC()
+        tempC = max31855.temperature 
+        tempC = int(tempC-18)
+        print("Temperature: {} C ".format(tempC))
         return temp

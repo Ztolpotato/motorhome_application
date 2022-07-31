@@ -3,12 +3,6 @@ from gui import reversingCamera
 from gui import startPage
 from gui import engineSensorsWindow
 from model import motorHomeModel
-import busio
-import adafruit_bitbangio as bitbangio
-import board
-import digitalio
-import adafruit_max31855
-import time
 
 #from controller import motorHomeController
 import tkinter as tk
@@ -54,24 +48,15 @@ class MotorHomeApplication(tk.Tk):
         self.reversingCameraView.set_controller(self)
         
         th = threading.Thread(target=self.mod.logicMain)
-        #th.start()
+        th.start()
         th2 = threading.Thread(target=self.th_camera)
-        th2.start()
+        #th2.start()
         self.show_frame("reversingCamera")
         #self.engineSensorView.updateEngineTemp(75)
         #self.engineSensorView.emptyCoolant()
         #self.engineSensorView.fuel0("12")
     def th_camera(self):
-        cs = digitalio.DigitalInOut(board.D7)
-        cs.direction = digitalio.Direction.OUTPUT
-        spi = board.SPI()
-        max31855 = adafruit_max31855.MAX31855(spi, cs)
-        while True:
-           tempC = max31855.temperature 
-           tempC = int(tempC-18)
-           print("Temperature: {} C ".format(tempC))
-           time.sleep(4.0)
-        #self.reversingCameraView.runVideoStream()
+        self.reversingCameraView.runVideoStream()
 
     def show_frame(self, page_name):
         '''Show a frame for the given page name'''

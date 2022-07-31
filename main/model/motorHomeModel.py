@@ -5,14 +5,14 @@ import Adafruit_MCP3008
 import time
 #from model.modules import coolingLevel
 #from model.modules import fuelLevel
-#from model.modules import engineTemp
+from model.modules import engineTemp
 
 class Model:
     def __init__(self,controller):
         self.initMCP()
         self.controller = controller
         #self.coolingLevel = coolingLevel.coolingLevel()
-        #self.engineTemp = engineTemp.engineTemp()
+        self.engineTemp = engineTemp.engineTemp()
         #self.fuelLevel = fuelLevel.fuelLevel(self.mcp)
         #GPIO.setmode (GPIO.BCM)
         #GPIO.setup (14,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -20,7 +20,8 @@ class Model:
 
     def logicMain(self):
         while True:
-            time.sleep(1)
+            time.sleep(4)
+            self.__updateEngineTemperature()
             #self.__updateCoolantLevel()
             #self.__updateFuelLevel()
             #resistorValue = self.mcp.read_adc(0)
