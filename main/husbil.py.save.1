@@ -3,7 +3,13 @@ from gui import reversingCamera
 from gui import startPage
 from gui import engineSensorsWindow
 from model import motorHomeModel
-import os
+import busio
+import adafruit_bitbangio as bitbangio
+import board
+import digitalio
+import adafruit_max31855
+import time
+
 #from controller import motorHomeController
 import tkinter as tk
 import threading
@@ -13,11 +19,6 @@ class MotorHomeApplication(tk.Tk):
     
     def __init__(self):
         super().__init__()
-        cwd = os.getcwd()
-        print("working dir: {0}".format(cwd))
-        os.chdir('/home/robin/husbil/motorhome_application/main')
-        cwd = os.getcwd()
-        print("working dir: {0}".format(cwd)) 
         self.title("MotorHome sensor and reversing camera application")
         #Set the Geometry
         self.geometry("800x480")
@@ -29,7 +30,7 @@ class MotorHomeApplication(tk.Tk):
         self['bg'] = "#1E2130"
         
         #Full Screen Window
-        self.attributes('-fullscreen', True)
+        #self.attributes('-fullscreen', True)
         self.bind("<Escape>", lambda event: self.attributes("-fullscreen", False))
         
 
@@ -53,7 +54,7 @@ class MotorHomeApplication(tk.Tk):
         self.reversingCameraView.set_controller(self)
         
         th = threading.Thread(target=self.mod.logicMain)
-        th.start()
+        #th.start()
         th2 = threading.Thread(target=self.th_camera)
         th2.start()
         self.show_frame("reversingCamera")
@@ -61,20 +62,29 @@ class MotorHomeApplication(tk.Tk):
         #self.engineSensorView.emptyCoolant()
         #self.engineSensorView.fuel0("12")
     def th_camera(self):
-        self.reversingCameraView.runVideoStream()
+        cs = digitalio.DigitalInOut(board.D7)
+        cs.direction = digitalio.Direction.OUTPUT
+        spi = board.SPI()
+        max31855 = adafruit_max31855.MAX31855(spi, cs)
+        while True:
+           tempC = max31855.temperature 
+           tempC = int(tempC-18)
+           print("Temperature: {} C ".format(tempC))
+           time.sleep(4.0)
+        #self.reversingCameraView.runVideoStream()
 
     def show_frame(self, page_name):
         '''Show a frame for the given page name'''
         frame = self.frames[page_name]
         frame.tkraise()
 
-    def fullCoolant(self):
+    def fullCoolant():
         self.engineSensorView.fullCoolant()
 
-    def moderatelyFullCoolant(self):
+    def moderatelyFullCoolant():
         self.engineSensorView.moderateCoolant()
 
-    def emptyCoolant(self):
+    def emptyCoolant():
         self.engineSensorView.emptyCoolant()
 
     def fuel100(fuelValue):
@@ -89,7 +99,7 @@ class MotorHomeApplication(tk.Tk):
     def fuel0(fuelValue):
         self.engineSensorView.fuel0(fuelValue)
 
-    def engineTemp(self,engineTemp):
+    def engineTemp(engineTemp):
         self.engineSensorView.updateEngineTemp(engineTemp)
 
 if __name__ == '__main__':

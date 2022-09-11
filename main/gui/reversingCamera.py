@@ -9,7 +9,8 @@ class reversingCamera(tk.Frame):
         # Initialize style
         s = ttk.Style()
         global cap
-        cap = cv2.VideoCapture(-1,2)
+        cap = cv2.VideoCapture(0)
+        print("defines cap here")
         cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
         # Create style used by default for all Frames
         s.configure('TFrame', background="#1E2130")
@@ -33,7 +34,7 @@ class reversingCamera(tk.Frame):
         self.controller.show_frame("engineSensorsWindow")
 
     def runVideoStream(self):
-        
+        print("rurri")
         ret, frame = cap.read()
         print(ret)
         if ret==True:

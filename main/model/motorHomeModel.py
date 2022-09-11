@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 import time
-#from model.modules import coolingLevel
+from model.modules import coolingLevel
 #from model.modules import fuelLevel
 from model.modules import engineTemp
 
@@ -11,7 +11,7 @@ class Model:
     def __init__(self,controller):
         self.initMCP()
         self.controller = controller
-        #self.coolingLevel = coolingLevel.coolingLevel()
+        self.coolingLevel = coolingLevel.coolingLevel()
         self.engineTemp = engineTemp.engineTemp()
         #self.fuelLevel = fuelLevel.fuelLevel(self.mcp)
         #GPIO.setmode (GPIO.BCM)
@@ -20,12 +20,12 @@ class Model:
 
     def logicMain(self):
         while True:
-            time.sleep(4)
             self.__updateEngineTemperature()
-            #self.__updateCoolantLevel()
+            time.sleep(2)
+            self.__updateCoolantLevel()
             #self.__updateFuelLevel()
             #resistorValue = self.mcp.read_adc(0)
-            print(resistorValue)
+            #print(resistorValue)
 
     def initMCP(self):
             # Hardware SPI configuration:
@@ -33,8 +33,8 @@ class Model:
             SPI_DEVICE = 0
             self.mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
 
-    def updateCoolantLevel(self):
-        state = coolingLevel.getLevel()
+    def __updateCoolantLevel(self):
+        state = self.coolingLevel.getLevel()
         if state == 1:
             self.controller.fullCoolant()
         elif state == 0:
