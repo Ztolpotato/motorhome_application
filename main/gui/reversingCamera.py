@@ -10,7 +10,6 @@ class reversingCamera(tk.Frame):
         s = ttk.Style()
         global cap
         cap = cv2.VideoCapture(0)
-        print("defines cap here")
         cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
         # Create style used by default for all Frames
         s.configure('TFrame', background="#1E2130")
@@ -34,17 +33,18 @@ class reversingCamera(tk.Frame):
         self.controller.show_frame("engineSensorsWindow")
 
     def runVideoStream(self):
-        print("rurri")
-        ret, frame = cap.read()
-        print(ret)
-        if ret==True:
-            frame = cv2.resize(frame,(800,450),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
-            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-            img = Image.fromarray(cv2image)
-            imgtk = ImageTk.PhotoImage(image=img)
-            self.lmain.imgtk = imgtk
-            self.lmain.configure(image=imgtk)
-        self.lmain.after(1, self.runVideoStream)
+        try:
+            ret, frame = cap.read()
+            if ret==True:
+                frame = cv2.resize(frame,(800,450),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
+                cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+                img = Image.fromarray(cv2image)
+                imgtk = ImageTk.PhotoImage(image=img)
+                self.lmain.imgtk = imgtk
+                self.lmain.configure(image=imgtk)
+            self.lmain.after(1, self.runVideoStream)
+        except:
+            print("Failed to access camera feed")
 
     def releaseVideoStream():
         cap.release()

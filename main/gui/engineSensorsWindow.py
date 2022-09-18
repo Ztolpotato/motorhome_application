@@ -40,7 +40,11 @@ class engineSensorsWindow(ttk.Frame):
         fuelPercentageLabel.grid(row=row,column=col,rowspan=rowspan)
 
     def __setOutdoorTemperature(self,row,col,rowspan,colspan):
-        self.__addText("Outdoor Temp: " + "- C\N{DEGREE SIGN}", row, col, rowspan)
+        global outdoortemp
+        outdoortemp = tk.StringVar()
+        outdoortemp.set("Outdoor Temp: " + " -C\N{DEGREE SIGN}")
+        outdoortempLabel = tk.Label(self,textvariable=outdoortemp,bg="#1E2130",fg='white',font=("Open sans", 15))
+        outdoortempLabel.grid(row=row,column=col,rowspan=rowspan)
 
     def __setIndoorTemperature(self,row,col,rowspan,colspan):
         self.__addText("Indoor Temp: " + "- C\N{DEGREE SIGN}", row, col, rowspan)
@@ -216,3 +220,6 @@ class engineSensorsWindow(ttk.Frame):
         engineTempImg = ImageTk.PhotoImage(engineTempImg)
         engineCanvas.imgref = engineTempImg
         engineCanvas.itemconfig(fuelCImg,image = engineTempImg)
+
+    def updateAllTemps(self,allTemps):
+        outdoortemp.set("Outdoor Temp: " + allTemps +" C\N{DEGREE SIGN}")

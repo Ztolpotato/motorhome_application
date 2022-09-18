@@ -4,6 +4,7 @@ import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 import time
 from model.modules import coolingLevel
+from model.modules import temperatureSensors
 #from model.modules import fuelLevel
 from model.modules import engineTemp
 
@@ -13,6 +14,7 @@ class Model:
         self.controller = controller
         self.coolingLevel = coolingLevel.coolingLevel()
         self.engineTemp = engineTemp.engineTemp()
+        self.allTemp = temperatureSensors.temperatureSensors()
         #self.fuelLevel = fuelLevel.fuelLevel(self.mcp)
         #GPIO.setmode (GPIO.BCM)
         #GPIO.setup (14,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -21,6 +23,7 @@ class Model:
     def logicMain(self):
         while True:
             self.__updateEngineTemperature()
+            self.__updateAlltemperatures()
             time.sleep(2)
             self.__updateCoolantLevel()
             #self.__updateFuelLevel()
@@ -48,6 +51,9 @@ class Model:
 
     def __updateEngineTemperature(self):
         self.controller.engineTemp(self.engineTemp.getTemp())
+
+    def __updateAlltemperatures(self):
+        self.controller.updateAllTemps(self.allTemp.read_temp())
 
     def __updateFuelLevel(self):
         fuelValue = self.fuelLevel.getLevel()

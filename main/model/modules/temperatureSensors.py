@@ -21,6 +21,7 @@ class temperatureSensors:
         return lines
 
     def read_temp():
+        print("reading temp from file")
         lines = read_temp_raw()
         while lines[0].strip()[-3:] != 'YES':
             time.sleep(0.2)
@@ -29,4 +30,5 @@ class temperatureSensors:
         if equals_pos != -1:
             temp_string = lines[1][equals_pos+2:]
             temp_c = float(temp_string) / 1000.0
+            print("found temp in file")
             return temp_c

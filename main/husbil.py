@@ -56,6 +56,7 @@ class MotorHomeApplication(tk.Tk):
         th.start()
         th2 = threading.Thread(target=self.th_camera)
         th2.start()
+        
         self.show_frame("reversingCamera")
         #self.engineSensorView.updateEngineTemp(75)
         #self.engineSensorView.emptyCoolant()
@@ -92,6 +93,8 @@ class MotorHomeApplication(tk.Tk):
     def engineTemp(self,engineTemp):
         self.engineSensorView.updateEngineTemp(engineTemp)
 
+    def updateAllTemps(self,allTemps):
+        self.engineSensorView.updateAllTemps(allTemps)
 if __name__ == '__main__':
     app =  MotorHomeApplication()
     app.mainloop()
