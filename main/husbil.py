@@ -29,8 +29,8 @@ class MotorHomeApplication(tk.Tk):
         self['bg'] = "#1E2130"
         
         #Full Screen Window
-        self.attributes('-fullscreen', True)
-        self.bind("<Escape>", lambda event: self.attributes("-fullscreen", False))
+        #self.attributes('-fullscreen', True)
+        #self.bind("<Escape>", lambda event: self.attributes("-fullscreen", False))
         
 
         #Creates frames and saves them in self.frames
@@ -93,8 +93,12 @@ class MotorHomeApplication(tk.Tk):
     def engineTemp(self,engineTemp):
         self.engineSensorView.updateEngineTemp(engineTemp)
 
-    def updateAllTemps(self,allTemps):
-        self.engineSensorView.updateAllTemps(allTemps)
+    def updateAllTemps(self,outdoor,indoor):
+        self.engineSensorView.updateAllTemps(outdoor,indoor)
+
+    def setSpeed(self,speed):
+        self.engineSensorView.setSpeed(speed)
+
 if __name__ == '__main__':
     app =  MotorHomeApplication()
     app.mainloop()

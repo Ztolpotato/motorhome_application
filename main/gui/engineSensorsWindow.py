@@ -27,7 +27,6 @@ class engineSensorsWindow(ttk.Frame):
         global emptyFuel
         emptyFuel = ImageTk.PhotoImage(Image.open("fluid0T.png"))
         global speedfig
-        
 
     def set_controller(self,controller):
         self.controller = controller
@@ -47,7 +46,12 @@ class engineSensorsWindow(ttk.Frame):
         outdoortempLabel.grid(row=row,column=col,rowspan=rowspan)
 
     def __setIndoorTemperature(self,row,col,rowspan,colspan):
-        self.__addText("Indoor Temp: " + "- C\N{DEGREE SIGN}", row, col, rowspan)
+        global indoortemp
+        indoortemp = tk.StringVar()
+        indoortemp.set("Outdoor Temp: " + " -C\N{DEGREE SIGN}")
+        indoortempLabel = tk.Label(self,textvariable=indoortemp,bg="#1E2130",fg='white',font=("Open sans", 15))
+        indoortempLabel.grid(row=row,column=col,rowspan=rowspan)
+
 
     def __addText(self,text,row,col,span):
         label = tk.Label(self,text=text,bg="#1E2130",fg='white',font=("Open sans", 15))
@@ -114,7 +118,7 @@ class engineSensorsWindow(ttk.Frame):
         img = Image.open("speed.png")
         img = img.resize((210,150))
         img = ImageTk.PhotoImage(img)
-        
+        global canvas
         canvas = tk.Canvas(self, bg="#1E2130", width=210, height=150,highlightthickness=0)
         canvas.grid(row=row, column=col,columnspan=colspan,rowspan=rowspan)
         canvas.create_image(100,115, anchor="s",image=img)
@@ -221,5 +225,15 @@ class engineSensorsWindow(ttk.Frame):
         engineCanvas.imgref = engineTempImg
         engineCanvas.itemconfig(fuelCImg,image = engineTempImg)
 
-    def updateAllTemps(self,allTemps):
-        outdoortemp.set("Outdoor Temp: " + allTemps +" C\N{DEGREE SIGN}")
+    def updateAllTemps(self,outdoor,indoor):
+        outdoortemp.set("Outdoor Temp: " + "{:.1f}".format(outdoor) +" C\N{DEGREE SIGN}")
+        indoortemp.set("Indoor Temp: " + "{:.1f}".format(indoor) +" C\N{DEGREE SIGN}")
+
+    def setSpeed(self,speed):
+        speedometer = self.__createSpeedGaugeFigure(speed)
+        speedometer.write_image("speed.png")
+        img = Image.open("speed.png")
+        img = img.resize((210,150))
+        img = ImageTk.PhotoImage(img)
+        canvas.imgref = img
+        canvas.itemconfig(fuelCImg,image = img)

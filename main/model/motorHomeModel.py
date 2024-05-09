@@ -1,12 +1,16 @@
 
 import RPi.GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
-import Adafruit_MCP3008
+import adafruit_mcp3xxx.mcp3008 as MCP
+import board
+import digitalio
 import time
+import bitbangio
 from model.modules import coolingLevel
 from model.modules import temperatureSensors
-#from model.modules import fuelLevel
+from model.modules import fuelLevel
 from model.modules import engineTemp
+from model.modules import gps
 
 class Model:
     def __init__(self,controller):
@@ -15,26 +19,41 @@ class Model:
         self.coolingLevel = coolingLevel.coolingLevel()
         self.engineTemp = engineTemp.engineTemp()
         self.allTemp = temperatureSensors.temperatureSensors()
+        self.gps = gps.gps()
         #self.fuelLevel = fuelLevel.fuelLevel(self.mcp)
-        #GPIO.setmode (GPIO.BCM)
-        #GPIO.setup (14,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        
+        GPIO.setmode(GPIO.BCM)
+        global reverse
+        reverse = 0
+        GPIO.setup(11, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        #GPIO.setup (14,GPIO.IN, pull_up_down=GPIO.PUD_DOWN) do this on fuellevel pin
 
     def logicMain(self):
         while True:
             self.__updateEngineTemperature()
             self.__updateAlltemperatures()
-            time.sleep(2)
+            time.sleep(1)
             self.__updateCoolantLevel()
+            self.__updateGPS()
+            if GPIO.input(11) != reverse:
+                reverse = GPIO.input(11)
+                #HERE WE CHANGE BETWEEN SCREENS
             #self.__updateFuelLevel()
             #resistorValue = self.mcp.read_adc(0)
             #print(resistorValue)
 
     def initMCP(self):
+            cs = digitalio.DigitalInOut(board.D29)
+            cs.direction = digitalio.Direction.OUTPUT
+            cs.value = True
+            spi = bitbangio.SPI(board.D33, MISO=board.D31,MOSI=board.D35)
             # Hardware SPI configuration:
-            SPI_PORT   = 0
-            SPI_DEVICE = 0
-            self.mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
+            #SPI_PORT   = 0
+            #SPI_DEVICE = 0
+            #spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE)
+            #self.mcp = MCP.MCP3008(spi)
+    def __updateGPS(self):
+        speed = self.gps.getSpeed()
+        self.controller.setSpeed(speed)
 
     def __updateCoolantLevel(self):
         state = self.coolingLevel.getLevel()
@@ -45,15 +64,11 @@ class Model:
         else:
             self.controller.emptyCoolant()
 
-    def __updateSpeed(self):
-        #TODO IMPLEMENT waiting for sensors
-        print("not implemented yet")
-
     def __updateEngineTemperature(self):
         self.controller.engineTemp(self.engineTemp.getTemp())
 
     def __updateAlltemperatures(self):
-        self.controller.updateAllTemps(self.allTemp.read_temp())
+        self.controller.updateAllTemps(self.allTemp.read_temp('outdoor'),self.allTemp.read_temp('indoor'))
 
     def __updateFuelLevel(self):
         fuelValue = self.fuelLevel.getLevel()
@@ -65,14 +80,6 @@ class Model:
             self.controller.fuel25(fuelValue)
         else:
             self.controller.fuel0(fuelValue)
-
-    def __updateIndoorTemperature(self):
-        #TODO IMPLEMENT waiting for sensors
-        print("not implemented yet")
-
-    def __updateOutdoorTemperature(self):
-        #TODO IMPLEMENT waiting for sensors
-        print("not implemented yet")
 
     def __reverseSignalReceived(self):
         #TODO IMPLEMENT waiting for sensors

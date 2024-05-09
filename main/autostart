@@ -1,0 +1,2 @@
+sudo nano /etc/xdg/lxsession/LXDE-pi/autostart finns ej fil husbil.sh
+sudo nano /etc/xdg/autostart/display.desktop this work but need sudo?
