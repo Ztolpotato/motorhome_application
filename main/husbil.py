@@ -54,8 +54,8 @@ class MotorHomeApplication(tk.Tk):
         
         th = threading.Thread(target=self.mod.logicMain)
         th.start()
-        th2 = threading.Thread(target=self.th_camera)
-        th2.start()
+        #th2 = threading.Thread(target=self.th_camera)
+        #th2.start()
         
         self.show_frame("reversingCamera")
         #self.engineSensorView.updateEngineTemp(75)
