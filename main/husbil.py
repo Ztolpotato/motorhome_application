@@ -16,8 +16,6 @@ class MotorHomeApplication(tk.Tk):
         cwd = os.getcwd()
         print("working dir: {0}".format(cwd))
         os.chdir('/home/robin/husbil/motorhome_application/main')
-        cwd = os.getcwd()
-        print("working dir: {0}".format(cwd)) 
         self.title("MotorHome sensor and reversing camera application")
         #Set the Geometry
         self.geometry("800x480")
@@ -54,8 +52,8 @@ class MotorHomeApplication(tk.Tk):
         
         th = threading.Thread(target=self.mod.logicMain)
         th.start()
-        #th2 = threading.Thread(target=self.th_camera)
-        #th2.start()
+        th2 = threading.Thread(target=self.th_camera)
+        th2.start()
         
         self.show_frame("reversingCamera")
         #self.engineSensorView.updateEngineTemp(75)

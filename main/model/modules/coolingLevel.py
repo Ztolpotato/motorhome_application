@@ -23,9 +23,9 @@ class coolingLevel:
             self.slidingWindow.pop()
             self.slidingWindow.pop()
         i = sum(self.slidingWindow)
-        print(self.slidingWindow)
-        print(lowState)
-        print(highState)
+        #print(self.slidingWindow)
+        #print(lowState)
+        #print(highState)
         if len(self.slidingWindow) > 15:
             if i > 30:
                 return 1

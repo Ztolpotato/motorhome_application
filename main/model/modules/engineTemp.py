@@ -22,3 +22,4 @@ class engineTemp:
         tempC = int(((tempC-17)*100)/91)
         print("Temperature: {} C ".format(tempC))
         return tempC
+

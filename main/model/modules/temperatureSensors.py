@@ -16,8 +16,8 @@ class temperatureSensors:
         return
 
     def read_temp(self,temp):
-        print(indoorTemp)
-        print(outdoorTemp)
+        #print(indoorTemp)
+        #print(outdoorTemp)
         if temp == 'outdoor':
            lines = self.read_temp_raw(outdoorTemp)
            while lines[0].strip()[-3:] != 'YES':

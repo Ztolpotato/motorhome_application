@@ -36,6 +36,7 @@ class reversingCamera(tk.Frame):
         try:
             ret, frame = cap.read()
             if ret==True:
+                print("revser CAMERA")
                 frame = cv2.resize(frame,(800,450),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
                 cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
                 img = Image.fromarray(cv2image)
