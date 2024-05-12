@@ -27,7 +27,7 @@ class reversingCamera(tk.Frame):
         backButton = backButton.subsample(30, 30)
         switchButton = tk.Button(self,text="Switch Screen",fg='black', image=backButton, bg="white", font=("Open sans", 15),
                 command=self.onSwitchButtonClick)
-        switchButton.place(x=20,y=20)
+        switchButton.place(row=0,column=0, sticky=")
 
     def onSwitchButtonClick(self):
         self.controller.show_frame("engineSensorsWindow")
@@ -36,6 +36,7 @@ class reversingCamera(tk.Frame):
         try:
             ret, frame = cap.read()
             if ret==True:
+                print("revser CAMERA")
                 frame = cv2.resize(frame,(800,450),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
                 cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
                 img = Image.fromarray(cv2image)
