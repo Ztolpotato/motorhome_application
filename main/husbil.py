@@ -4,7 +4,6 @@ from gui import startPage
 from gui import engineSensorsWindow
 from model import motorHomeModel
 import os
-#from controller import motorHomeController
 import tkinter as tk
 import threading
 
@@ -66,35 +65,20 @@ class MotorHomeApplication(tk.Tk):
         '''Show a frame for the given page name'''
         frame = self.frames[page_name]
         frame.tkraise()
+    
+    def updateCoolant(self, level):
+        self.engineSensorView.updateCoolantLevel(level)
 
-    def fullCoolant(self):
-        self.engineSensorView.fullCoolant()
+    def updateFuelLevel(self, fuelValue):
+        self.engineSensorView.updateFuelLevel(fuelValue)
 
-    def moderatelyFullCoolant(self):
-        self.engineSensorView.moderateCoolant()
-
-    def emptyCoolant(self):
-        self.engineSensorView.emptyCoolant()
-
-    def fuel100(fuelValue):
-        self.engineSensorView.fuel100(fuelValue)
-
-    def fuel50(fuelValue):
-        self.engineSensorView.fuel50(fuelValue)
-
-    def fuel25(fuelValue):
-        self.engineSensorView.fuel25(fuelValue)
-
-    def fuel0(fuelValue):
-        self.engineSensorView.fuel0(fuelValue)
-
-    def engineTemp(self,engineTemp):
+    def engineTemp(self, engineTemp):
         self.engineSensorView.updateEngineTemp(engineTemp)
 
-    def updateAllTemps(self,outdoor,indoor):
+    def updateAllTemps(self, outdoor, indoor):
         self.engineSensorView.updateAllTemps(outdoor,indoor)
 
-    def setSpeed(self,speed):
+    def setSpeed(self, speed):
         self.engineSensorView.setSpeed(speed)
 
     def setFluidLevels(self, levels):

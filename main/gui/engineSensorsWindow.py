@@ -1,5 +1,7 @@
 import tkinter as tk
+from tkdial import Meter
 from tkinter import ttk
+from tkinter import StringVar
 import plotly.graph_objects as go
 from PIL import ImageTk, Image
 import numpy as np
@@ -11,8 +13,8 @@ class engineSensorsWindow(ttk.Frame):
         super().__init__(parent)
         self.grid()
         self.controller = None
-        self.__setEngineTemp(1,0,1,1)
-        self.__setCoolantLevel(1,1,1,1)
+        self.__initiateEngineTemperature(1,0,1,1)
+        self.__InitiateCoolantLevel(1,1,1,1)
         self.__setFuelLevel(3,1,1,1)
         self.__setSpeedometer(3, 0, 1, 1)
         self.__addFrameSwitchButton(4)
@@ -27,6 +29,15 @@ class engineSensorsWindow(ttk.Frame):
         global emptyFuel
         emptyFuel = ImageTk.PhotoImage(Image.open("fluid0T.png"))
         global speedfig
+
+    def __initiateEngineTemperature(self,row,col,rowspan,colspan):
+        global meter2
+        meter2 = Meter(self, radius=200, start=0, end=120, border_width=0,
+               fg="#1E2130", text_color="white", start_angle=270, end_angle=-270,
+               text_font="DS-Digital 30", scale_color="white", needle_color="red", bg="#1E2130",)
+        meter2.set_mark(85, 120) # set red marking from 140 to 160
+        meter2.set(0)
+        meter2.grid(row=row, column=col, padx=rowspan, pady=colspan)
 
     def set_controller(self,controller):
         self.controller = controller
@@ -52,11 +63,6 @@ class engineSensorsWindow(ttk.Frame):
         indoortempLabel = tk.Label(self,textvariable=indoortemp,bg="#1E2130",fg='white',font=("Open sans", 15))
         indoortempLabel.grid(row=row,column=col,rowspan=rowspan)
 
-
-    def __addText(self,text,row,col,span):
-        label = tk.Label(self,text=text,bg="#1E2130",fg='white',font=("Open sans", 15))
-        label.grid(row=row,column=col,rowspan=span)
-
     def __addFrameSwitchButton(self,row):
         switchButton = tk.Button(self,text="Sensor screen",fg='white', bg="#1E2130", font=("Open sans", 15),
                 command=self.onSwitchButtonClick)
@@ -75,7 +81,7 @@ class engineSensorsWindow(ttk.Frame):
 
     def __setFuelLevel(self,row,col,rowspan,colspan):
         global fuelImg
-        fuelImg = ImageTk.PhotoImage(Image.open("fluid50DT.png"))
+        fuelImg = ImageTk.PhotoImage(Image.open("fuel_100_percent.png"))
         global fuelCanvas
         fuelCanvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
         fuelCanvas.grid(row=row, column=col,rowspan=rowspan,columnspan=colspan)
@@ -83,9 +89,9 @@ class engineSensorsWindow(ttk.Frame):
         fuelCImg = fuelCanvas.create_image(100,150, anchor="s",image=fuelImg)
         self.__addTitleToImage("Fuel level", row-1, col)
 
-    def __setCoolantLevel(self,row,col,rowspan,colspan):
+    def __InitiateCoolantLevel(self,row,col,rowspan,colspan):
         global CoolantImg
-        CoolantImg = ImageTk.PhotoImage(Image.open("fluid50T.png"))
+        CoolantImg = ImageTk.PhotoImage(Image.open("water_100_percent.png"))
         global coolantCanvas
         coolantCanvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
         coolantCanvas.grid(row=row, column=col,rowspan=rowspan,columnspan=colspan)
@@ -97,143 +103,48 @@ class engineSensorsWindow(ttk.Frame):
         label = tk.Label(self,text=text,bg="#1E2130",fg='white',font=("Open sans", 15))
         label.grid(row=row,column=col,sticky="s")
 
-    def __setEngineTemp(self,row,col,rowspan,colspan):
-        speedometer = self.__createFigure(0)
-        speedometer.write_image("assets/temp.png")
-        engineTempImg = Image.open("assets/temp.png")
-        engineTempImg = engineTempImg.resize((210,150))
-        engineTempImg = ImageTk.PhotoImage(engineTempImg)
-        global engineCanvas
-        engineCanvas = tk.Canvas(self, bg="#1E2130", width=210, height=100,highlightthickness=0)
-        engineCanvas.grid(row=row, column=col,columnspan=colspan,rowspan=rowspan)
-        engineCanvas.create_image(100,115, anchor="s",image=engineTempImg)
-        engineCanvas.imgref = engineTempImg
-        self.__addTitleToImage("Engine temperature", row-1, col)
-
     def __setSpeedometer(self,row,col,rowspan,colspan):
-        global speedometer
-        speedometer = self.__createSpeedGaugeFigure(0)
-        speedometer.write_image("speed.png")
-        global img
-        img = Image.open("speed.png")
-        img = img.resize((210,150))
-        img = ImageTk.PhotoImage(img)
-        global canvas
-        canvas = tk.Canvas(self, bg="#1E2130", width=210, height=150,highlightthickness=0)
-        canvas.grid(row=row, column=col,columnspan=colspan,rowspan=rowspan)
-        canvas.create_image(100,115, anchor="s",image=img)
-        canvas.imgref = img
-        self.__addTitleToImage("SPEED", row-1, col)
+        global speed 
+        speed = StringVar()
+        speed.set("0")
+        label = tk.Label(self,textvariable=speed,bg="#1E2130",fg="White" ,font=("Open sans", 80))
+        label.grid(row=row, column=col,columnspan=colspan,rowspan=rowspan)
 
-    def __createFigure(self,temp):
-        lay = go.Layout(
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)'
-        )
-        fig = go.Figure(go.Indicator(
-            domain = {'x': [0, 1], 'y': [0, 1]},
-            value = temp,
-            mode = "gauge+number",
-            number = {'font': {'size': 150}},
-            gauge = {'axis': {'range': [-20, 120], 'tickwidth': 1,'tickcolor': "black"},
-                'bar': {'color': "MidnightBlue"},#MidnightBlue"},
-                    'steps' : [
-                        {'range': [-20, 40], 'color': "Blue"},
-                        {'range': [40, 80], 'color': "Green"},
-                        {'range': [80, 95], 'color': "Orange"},
-                        {'range': [95, 120], 'color': "Red"}]}),
-                        layout=lay)
-        return fig
-
-    def __createSpeedGaugeFigure(self,speed):
-        lay = go.Layout(
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)'
-        )
-        speedfig = go.Figure(go.Indicator(
-            mode = "number",
-            value = speed,
-            number= {'font': {'size': 150}},
-            domain = {'row': 0, 'column': 1},
-            #domain = {'x': [0, 1], 'y': [0, 1]},
-            #gauge = {'axis': {'range': [None, 160]}}
-            ),
-            layout=lay)
-        return speedfig
-
-    def fuel100(self,fuelValue):
-        fuelImg = Image.open("fluid50DT.png")
+    def __setFuel(self,image):
+        fuelImg = Image.open(image)
         fuelImg = ImageTk.PhotoImage(fuelImg)
         fuelCanvas.imgref = fuelImg
         fuelCanvas.itemconfig(fuelCImg,image = fuelImg)
-        self.changeFuelText(fuelValue)
 
-    def fuel50(self,fuelValue):
-        fuelImg = Image.open("fluid50DT.png")
-        fuelImg = ImageTk.PhotoImage(fuelImg)
-        fuelCanvas.imgref = fuelImg
-        fuelCanvas.itemconfig(fuelCImg,image = fuelImg)
-        self.changeFuelText(fuelValue)
+    def __setCoolantLevel(self, image):
+        CoolantImg = Image.open(image)
+        CoolantImg = ImageTk.PhotoImage(CoolantImg)
+        coolantCanvas.imgref = CoolantImg
+        coolantCanvas.itemconfig(fuelCImg,image = CoolantImg)
 
-    def fuel25(self,fuelValue):
-        fuelImg = Image.open("fluid50DT.png")
-        fuelImg = ImageTk.PhotoImage(fuelImg)
-        fuelCanvas.imgref = fuelImg
-        fuelCanvas.itemconfig(fuelCImg,image = fuelImg)
-        self.changeFuelText(fuelValue)
+    def updateFuelLevel(self, level):
+        if level < 2:
+            self.__setFuel("fuel_0_percent.png")
+        elif level > 8:
+            self.__setFuel("fuel_100_percent.png")
+        else:
+            self.__setFuel("fuel_50_percent.png")
 
-    def fuel0(self,fuelValue):
-        fuelImg = Image.open("fluid0DT.png")
-        fuelImg = ImageTk.PhotoImage(fuelImg)
-        fuelCanvas.imgref = fuelImg
-        fuelCanvas.itemconfig(fuelCImg,image = fuelImg)
-        self.changeFuelText(fuelValue)
-
-    def changeFuelText(self,fuelvalue):
-        fuelText.set("Fuel: " + fuelvalue + "%")
-
-    def empty(self):
-        emptyFuel = Image.open("fluid0T.png")
-        emptyFuel = ImageTk.PhotoImage(emptyFuel)
-        fuelCanvas.imgref = emptyFuel
-        fuelCanvas.itemconfig(fuelCImg,image = emptyFuel)
-
-    def fullCoolant(self):
-        fullCoolant = Image.open("coolantHigh.png")
-        fullCoolant = ImageTk.PhotoImage(fullCoolant)
-        coolantCanvas.imgref = fullCoolant
-        coolantCanvas.itemconfig(coolantContainer,image = fullCoolant)
-
-    def emptyCoolant(self):
-        emptyCoolant = Image.open("coolantLow.png")
-        emptyCoolant = ImageTk.PhotoImage(emptyCoolant)
-        coolantCanvas.imgref = emptyCoolant
-        coolantCanvas.itemconfig(coolantContainer,image = emptyCoolant)
-
-    def moderateCoolant(self):
-        moderateCoolant = Image.open("fluidOKT.png")
-        moderateCoolant = ImageTk.PhotoImage(moderateCoolant)
-        coolantCanvas.imgref = moderateCoolant
-        coolantCanvas.itemconfig(coolantContainer,image = moderateCoolant)
+    def updateCoolantLevel(self, level):
+        if level == 1:
+            self.__setCoolantLevel("water_50_percent.png")
+        elif level == 2:
+            self.__setCoolantLevel("water_100_percent.png")
+        else:
+            self.__setCoolantLevel("water_0_percent.png")
 
     def updateEngineTemp(self,engineTemp):
-        speedometer = self.__createFigure(engineTemp)
-        speedometer.write_image("assets/temp.png")
-        engineTempImg = Image.open("assets/temp.png")
-        engineTempImg = engineTempImg.resize((210,150))
-        engineTempImg = ImageTk.PhotoImage(engineTempImg)
-        engineCanvas.imgref = engineTempImg
-        engineCanvas.itemconfig(fuelCImg,image = engineTempImg)
+        meter2.set(str(engineTemp))
 
     def updateAllTemps(self,outdoor,indoor):
         outdoortemp.set("Outdoor Temp: " + "{:.1f}".format(outdoor) +" C\N{DEGREE SIGN}")
         indoortemp.set("Indoor Temp: " + "{:.1f}".format(indoor) +" C\N{DEGREE SIGN}")
 
     def setSpeed(self,speed):
-        speedometer = self.__createSpeedGaugeFigure(speed)
-        speedometer.write_image("speed.png")
-        img = Image.open("speed.png")
-        img = img.resize((210,150))
-        img = ImageTk.PhotoImage(img)
-        canvas.imgref = img
-        canvas.itemconfig(fuelCImg,image = img)
+        speed.set(str(speed))
+

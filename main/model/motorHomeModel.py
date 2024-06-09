@@ -36,7 +36,7 @@ class Model:
         #self.reverse = GPIO.input(11)
         while True:
             self.__updateEngineTemperature()
-            #self.__updateAlltemperatures()
+            self.__updateAlltemperatures()
             self.__updateCoolantLevel()
             self.__updateGPS()
             self.__updateFluidLevel()
@@ -65,12 +65,7 @@ class Model:
 
     def __updateCoolantLevel(self):
         state = self.coolingLevel.getLevel()
-        if state == 1:
-            self.controller.fullCoolant()
-        elif state == 0:
-            self.controller.moderatelyFullCoolant()
-        else:
-            self.controller.emptyCoolant()
+        self.controller.updateCoolant(state)
 
     def __updateEngineTemperature(self):
         self.controller.engineTemp(self.engineTemp.getTemp())
@@ -80,18 +75,7 @@ class Model:
 
     def __updateFuelLevel(self):
         fuelValue = self.fuelLevel.getLevel()
-        if fuelValue > 75:
-            self.controller.fuel100(fuelValue)
-        elif fuelValue > 50 :
-            self.controller.fuel50(fuelValue)
-        elif fuelValue > 25 :
-            self.controller.fuel25(fuelValue)
-        else:
-            self.controller.fuel0(fuelValue)
+        self.controller.updateFuelLevel(fuelValue//10)
 
     def __updateFluidLevel(self):
         self.controller.setFluidLevels(self.fluidLevel.getLevel())
-
-    def __reverseSignalReceived(self):
-        #TODO IMPLEMENT waiting for sensors
-        print("not implemented yet")
