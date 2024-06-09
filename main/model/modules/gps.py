@@ -20,7 +20,8 @@ class gps:
                 speed=str(newmsg.spd_over_grnd)
                 speed = int((float(speed)*1.85))
                 return speed
+            print("GPS error: decoding gps line is not GPRMC",)
             return -98
         except Exception as error:
-            print("An error occurred:", error)
+            print("GPS error:", error)
             return -99

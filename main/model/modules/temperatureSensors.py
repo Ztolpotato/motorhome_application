@@ -16,8 +16,8 @@ class temperatureSensors:
         return
 
     def read_temp(self,temp):
-        #print(indoorTemp)
-        #print(outdoorTemp)
+        print(indoorTemp)
+        print(outdoorTemp)
         if temp == 'outdoor':
            lines = self.read_temp_raw(outdoorTemp)
            while lines[0].strip()[-3:] != 'YES':
@@ -35,8 +35,10 @@ class temperatureSensors:
             return temp_c
 
     def read_temp_raw(self,file):
-        f = open(file, 'r')
-        lines = f.readlines()
-        f.close()
-        return lines
-
+        try:
+           f = open(file, 'r')
+           lines = f.readlines()
+           f.close()
+           return lines
+        except IOError:
+           return [""]

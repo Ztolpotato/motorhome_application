@@ -30,24 +30,21 @@ class Model:
         GPIO.setup(18, GPIO.OUT)
         GPIO.output(18,GPIO.HIGH)
         GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        #GPIO.setup (14,GPIO.IN, pull_up_down=GPIO.PUD_DOWN) do this on fuellevel pin
-
     def logicMain(self):
-        #self.reverse = GPIO.input(11)
         while True:
             self.__updateEngineTemperature()
-            #self.__updateAlltemperatures()
+            self.__updateAlltemperatures()
             self.__updateCoolantLevel()
             self.__updateGPS()
-            self.__updateFluidLevel()
-            if GPIO.input(17) == reverse:
+            if GPIO.input(17) == self.reverse
                 #HERE WE CHANGE BETWEEN SCREENS
                 GPIO.output(18, GPIO.HIGH)
-            elif GPIO.input(17) == 0:
-                GPIO.output(18, GPIO.LOW)
-            #self.__updateFuelLevel()
+            else:
+                GPIO.outout(18, GPIO.LOW)
+            self.__updateFuelLevel()
             #resistorValue = self.mcp.read_adc(0)
             #print(resistorValue)
+            #self.__updateLiquidLevels()
 
     #def initMCP(self):
             #cs = digitalio.DigitalInOut(board.D29)
@@ -89,7 +86,7 @@ class Model:
         else:
             self.controller.fuel0(fuelValue)
 
-    def __updateFluidLevel(self):
+    def self.__updateLiquidLevels(self):
         self.controller.setFluidLevels(self.fluidLevel.getLevel())
 
     def __reverseSignalReceived(self):

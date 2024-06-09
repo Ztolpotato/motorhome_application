@@ -97,6 +97,9 @@ class MotorHomeApplication(tk.Tk):
     def setSpeed(self,speed):
         self.engineSensorView.setSpeed(speed)
 
+    def setFluidLevels(self, levels):
+        self.sensorView.setLevels(levels)
+
 if __name__ == '__main__':
     app =  MotorHomeApplication()
     app.mainloop()

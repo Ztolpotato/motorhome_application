@@ -13,9 +13,9 @@ class sensorWindow(ttk.Frame):
         #self.__setEngineTemp()
         #self.__setCoolantLevel()
         #self.__setFuelLevel()
-        self.__setWaterLevel()
-        self.__setGreyWaterLevel()
-        self.__setBlackWaterLevel()
+        self.__setWaterLevel("fluid50.png")
+        self.__setGreyWaterLevel("fluid50GT.png")
+        self.__setBlackWaterLevel("fluid50GT.png")
         self.setOutdoorTemperature()
         self.setBatteryLevel()
         self.setIndoorTemperature()
@@ -35,6 +35,37 @@ class sensorWindow(ttk.Frame):
     def set_controller(self,controller):
         self.controller = controller
 
+    def setLevels(self, levels):
+        self.__waterSwitch(levels[0])
+        self.__greyWaterSwitch(levels[1])
+        self.__blackWaterSwitch(levels[2])
+
+    def __waterSwitch(self, level):
+        if level == 0:
+            self.__setWaterLevel("coolantLow.png")
+        elif level == 1:
+            self.__setWaterLevel("fluid50.png")
+        elif level == 2:
+            self.__setWaterLevel("fluid50.png")
+        elif level == 3:
+            self.__setWaterLevel("coolantHigh.png")
+
+    def __greyWaterSwitch(self, level):
+        if level == 0:
+            self.__setGreyWaterLevel("coolantLow.png")
+        elif level == 1:
+            self.__setGreyWaterLevel("fluid50GT.png")
+        elif level == 2:
+            self.__setGreyWaterLevel("coolantHigh.png")
+
+    def __blackWaterSwitch(self, level):
+        if level == 0:
+            self.__setBlackWaterLevel("coolantLow.png")
+        elif level == 1:
+            self.__setBlackWaterLevel("fluid50GT.png")
+        elif level == 2:
+            self.__setBlackWaterLevel("coolantHigh.png")
+
     def setBatteryLevel(self):
         self.__addText("Battery voltage" + " - V", 2, 0, 2)
 
@@ -44,51 +75,32 @@ class sensorWindow(ttk.Frame):
     def setIndoorTemperature(self):
         self.__addText("Indoor Temp: " + "- C\N{DEGREE SIGN}", 4, 0, 1)
 
-    def __setBlackWaterLevel(self):
+    def __setBlackWaterLevel(self, image):
         global blackWaterImg
-        blackWaterImg = ImageTk.PhotoImage(Image.open("fluid50GT.png"))
+        blackWaterImg = ImageTk.PhotoImage(Image.open(image))
         canvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
         canvas.grid(row=2, column=3)
         #canvas.pack()
         canvas.create_image(100,150, anchor="s",image=blackWaterImg)
-        self.__addTitleToImage("Greywater level", 1, 3)
+        self.__addTitleToImage("Blackwater level", 1, 3)
 
 
-    def __setGreyWaterLevel(self):
+    def __setGreyWaterLevel(self, image):
         global greeyWaterImg
-        greeyWaterImg = ImageTk.PhotoImage(Image.open("fluid50GT.png"))
+        greeyWaterImg = ImageTk.PhotoImage(Image.open(image))
         canvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
         canvas.grid(row=4, column=3)
         #canvas.pack()
         canvas.create_image(100,150, anchor="s",image=greeyWaterImg)
         self.__addTitleToImage("Greywater level", 3, 3)
 
-    def __setWaterLevel(self):
+    def __setWaterLevel(self, image):
         canvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
         canvas.grid(row=4, column=2)
         global img 
-        img = ImageTk.PhotoImage(Image.open("fluid50T.png"))
+        img = ImageTk.PhotoImage(Image.open(image))
         temp = canvas.create_image(100,150, anchor="s",image=img)
         self.__addTitleToImage("Water level", 3, 2)
-
-    def __setFuelLevel(self):
-        global fuelImg
-        fuelImg = ImageTk.PhotoImage(Image.open("fluid50DT.png"))
-        global fuelCanvas
-        fuelCanvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
-        fuelCanvas.grid(row=4, column=1)
-        #canvas.pack()
-        fuelCanvas.create_image(100,150, anchor="s",image=fuelImg)
-        self.__addTitleToImage("Fuel level", 3, 1)
-
-    def __setCoolantLevel(self):
-        global CoolantImg
-        CoolantImg = ImageTk.PhotoImage(Image.open("fluid50T.png"))
-        canvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
-        canvas.grid(row=4, column=0)
-        #canvas.pack()
-        canvas.create_image(100,150, anchor="s",image=CoolantImg)
-        self.__addTitleToImage("Coolant level", 3, 0)
 
     def __addTitleToImage(self,text,row,col):
         label = tk.Label(self,text=text,bg="#1E2130",fg='white',font=("Open sans", 15))
@@ -97,16 +109,6 @@ class sensorWindow(ttk.Frame):
     def __addText(self,text,row,col,span):
         label = tk.Label(self,text=text,bg="#1E2130",fg='white',font=("Open sans", 15))
         label.grid(row=row,column=col,rowspan=span)
-
-
-    def __setEngineTemp(self):
-        global tempImg
-        tempImg = Image.open("gauge.png")
-        tempImg = ImageTk.PhotoImage(tempImg)
-        canvas = tk.Canvas(self, bg="#1E2130", width=210, height=100,highlightthickness=0)
-        canvas.grid(row=1, column=0)
-        canvas.create_image(100,115, anchor="s",image=tempImg)
-        self.__addTitleToImage("Engine temperature", 0, 0)
 
     def __createFigure(self):
         lay = go.Layout(

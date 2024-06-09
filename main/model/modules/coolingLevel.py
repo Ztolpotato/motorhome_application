@@ -8,8 +8,7 @@ class coolingLevel:
         self.low = 23
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(24,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.setup(23,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        
+        GPIO.setup(23,GPIO.IN, pull_up_down=GPIO.PUD_DOWN) 
     #Returns -1 if level is to low, 0 if above lowest or 1 if full
     def getLevel(self):
         lowState = GPIO.input(self.low)
