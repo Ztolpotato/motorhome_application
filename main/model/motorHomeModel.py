@@ -1,4 +1,3 @@
-
 import RPi.GPIO as GPIO
 #import Adafruit_GPIO.SPI as SPI
 #import adafruit_mcp3xxx.mcp3008 as MCP
@@ -22,7 +21,7 @@ class Model:
         self.engineTemp = engineTemp.engineTemp()
         self.allTemp = temperatureSensors.temperatureSensors()
         self.gps = gps.gps()
-        self.fluidLevel = waterLevel.fluidLevel()
+        #self.fluidLevel = waterLevel.fluidLevel()
         #self.fuelLevel = fuelLevel.fuelLevel(self.mcp)
         GPIO.setmode(GPIO.BCM)
         global reverse
@@ -39,7 +38,7 @@ class Model:
             self.__updateAlltemperatures()
             self.__updateCoolantLevel()
             self.__updateGPS()
-            self.__updateFluidLevel()
+            #self.__updateFluidLevel()
             if GPIO.input(17) == reverse:
                 #HERE WE CHANGE BETWEEN SCREENS
                 GPIO.output(18, GPIO.HIGH)
@@ -48,6 +47,7 @@ class Model:
             #self.__updateFuelLevel()
             #resistorValue = self.mcp.read_adc(0)
             #print(resistorValue)
+            time.sleep(1)
 
     #def initMCP(self):
             #cs = digitalio.DigitalInOut(board.D29)

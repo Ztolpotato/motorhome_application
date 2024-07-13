@@ -12,16 +12,18 @@ class gps:
     #Reads GPS lat, long and speed. Convert speed in knots to kmh return INT
     def getSpeed(self):
         try: 
+          while True:
             newdata=self.ser.readline()
             if (newdata[0:6]).decode() =='$GPRMC':
                 newmsg=pynmea2.parse(newdata.decode())
                 lat=str(newmsg.latitude)
                 long=str(newmsg.longitude)
                 speed=str(newmsg.spd_over_grnd)
-                speed = int((float(speed)*1.85))
-                return speed
-            print("GPS error: decoding gps line is not GPRMC",)
-            return -98
+                if speed != 'None':
+                  speed = int((float(speed)*1.85))
+                  return speed
+                return 'errsig'
+            #print("GPS error: decoding gps line is not GPRMC",)
+            #return -98
         except Exception as error:
             print("GPS error:", error)
-            return -99

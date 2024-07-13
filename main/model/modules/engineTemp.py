@@ -8,7 +8,8 @@ class engineTemp:
 
     def __init__(self):
         cs = digitalio.DigitalInOut(board.D7)
-        spi = board.SPI()
+        #spi = board.SPI()
+        spi = busio.SPI(board.SCLK, board.MOSI, board.MISO)
         global max31855
         max31855 = adafruit_max31855.MAX31855(spi, cs)
 

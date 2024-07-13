@@ -2,22 +2,22 @@ import os
 import glob
 import time
 
-os.system('modprobe w1-gpio')
-os.system('modprobe w1-therm')
+#os.system('sudo modprobe w1-gpio')
+#os.system('sudo modprobe w1-therm')
  
 base_dir = '/sys/bus/w1/devices/28-'
 #device_folder = glob.glob(base_dir + '28*')[0]
 outdoorTemp = base_dir + '247f1e1e64ff' + '/w1_slave'
 indoorTemp = base_dir + '3e6e1e1e64ff' + '/w1_slave'
-
+#READS FROM GPIO4
 class temperatureSensors:
 
     def  __init__(self):
         return
 
     def read_temp(self,temp):
-        print(indoorTemp)
-        print(outdoorTemp)
+        #print(indoorTemp)
+        #print(outdoorTemp)
         if temp == 'outdoor':
            lines = self.read_temp_raw(outdoorTemp)
            while lines[0].strip()[-3:] != 'YES':

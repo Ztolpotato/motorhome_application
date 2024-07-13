@@ -13,29 +13,28 @@ class coolingLevel:
     def getLevel(self):
         lowState = GPIO.input(self.low)
         highState = GPIO.input(self.high)
-        self.slidingWindow.insert(0,lowState)
-        if highState == 1:
-           self.slidingWindow.insert(0,highState+1)
-        else:
-            self.slidingWindow.insert(0,highState)
-        if len(self.slidingWindow) > 21:
+
+        self.slidingWindow.insert(0,lowState+highState)
+
+        if len(self.slidingWindow) > 11:
             self.slidingWindow.pop()
             self.slidingWindow.pop()
+
         i = sum(self.slidingWindow)
         #print(self.slidingWindow)
         #print(lowState)
         #print(highState)
-        if len(self.slidingWindow) > 15:
-            if i > 30:
+        if len(self.slidingWindow) > 5:
+            if i > 15:
                 return 1
-            elif i > 7:
+            elif i > 9:
                 return 0
             else:
                 return -1
         currentVolumeReading = lowState + highState
-        if currentVolumeReading == 3:
+        if currentVolumeReading == 2:
             return 1
-        elif currentVolumeReading == 2:
+        elif currentVolumeReading == 1:
             return 0
         else:
             return -1

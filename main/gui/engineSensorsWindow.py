@@ -81,7 +81,7 @@ class engineSensorsWindow(ttk.Frame):
 
     def __setFuelLevel(self,row,col,rowspan,colspan):
         global fuelImg
-        fuelImg = ImageTk.PhotoImage(Image.open("fuel_100_percent.png"))
+        fuelImg = ImageTk.PhotoImage(Image.open("fuel_0_percent.png"))
         global fuelCanvas
         fuelCanvas = tk.Canvas(self, bg="#1E2130", width=190, height=150,highlightthickness=0)
         fuelCanvas.grid(row=row, column=col,rowspan=rowspan,columnspan=colspan)
@@ -139,12 +139,12 @@ class engineSensorsWindow(ttk.Frame):
             self.__setCoolantLevel("water_0_percent.png")
 
     def updateEngineTemp(self,engineTemp):
-        meter2.set(str(engineTemp))
+        meter2.set(engineTemp)
 
     def updateAllTemps(self,outdoor,indoor):
         outdoortemp.set("Outdoor Temp: " + "{:.1f}".format(outdoor) +" C\N{DEGREE SIGN}")
         indoortemp.set("Indoor Temp: " + "{:.1f}".format(indoor) +" C\N{DEGREE SIGN}")
 
-    def setSpeed(self,speed):
-        speed.set(str(speed))
+    def setSpeed(self,speedr):
+        speed.set(str(speedr))
 
